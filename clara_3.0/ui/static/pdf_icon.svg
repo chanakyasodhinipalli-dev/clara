@@ -1,0 +1,9 @@
+<!-- ui/static/pdf_icon.svg
+     Simple inline SVG used as a PDF/ZIP icon. Drop into ui/static/pdf_icon.svg
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="64" height="64" fill="none">
+  <rect x="2" y="3" width="14" height="18" rx="2" fill="#e53935"/>
+  <path d="M16 3v6h5" stroke="#b71c1c" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <text x="4" y="15" font-family="Verdana, Arial" font-size="6.2" fill="#fff" font-weight="700">PDF</text>
+  <rect x="17" y="14" width="5" height="7" rx="1" fill="#f2f2f2" opacity="0.15"/>
+</svg>

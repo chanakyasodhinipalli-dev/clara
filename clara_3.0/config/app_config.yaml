@@ -1,0 +1,42 @@
+﻿app:
+  name: "Enterprise Document Intelligence Framework"
+  version: "1.0.0"
+  environment: "development"
+
+paths:
+  input_folder: "./input"
+  output_folder: "./output"
+  temp_folder: "./temp"
+  logs_folder: "./logs"
+  doc_rules: "./config/doc_rules.csv"
+  prompts: "./config/prompts.yaml"
+  poppler_path: ""   # Optional: set to Poppler bin path if not in PATH
+  tesseract_cmd: ""  # Optional: set to tesseract.exe path if not in PATH
+
+file_handling:
+  allowed_extensions: [".pdf", ".png", ".jpeg", ".jpg", ".tif", ".tiff", ".txt"]
+  max_file_size_mb: 100
+
+ai_flags:
+  enable_llm: false
+  translation: false
+  summarization: false
+  ai_reasoning: false
+
+grouping:
+  threshold: 0.82
+  use_embeddings: true
+  embedding_model: "all-MiniLM-L6-v2"
+
+export:
+  zip: true
+  metadata_json: true
+  include_group_pdfs: true
+
+logging:
+  level: "INFO"
+  file: "./logs/app.log"
+
+runtime:
+  parallel: true
+  max_workers: 4

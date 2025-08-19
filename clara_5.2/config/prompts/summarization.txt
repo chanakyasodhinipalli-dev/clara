@@ -1,0 +1,1 @@
+Summarize the following text in native language and English: {{TEXT}}

@@ -1,0 +1,39 @@
+preprocessor_only:
+  steps:
+    - agent: preprocessor
+
+splitter_only:
+  steps:
+    - agent: splitter
+
+merger_only:
+  steps:
+    - agent: merger
+
+redaction_only:
+  steps:
+    - agent: redaction
+
+metadata_only:
+  steps:
+    - agent: metadata
+
+merger_redact_extract:
+  steps:
+    - agent: merger
+    - agent: redaction
+    - agent: metadata
+
+full_pipeline:
+  steps:
+    - agent: preprocessor
+    - agent: splitter
+    - agent: context
+    - agent: grouping
+    - agent: converted
+    - agent: redaction
+    - agent: ocr
+    - agent: translation
+    - agent: summarization
+    - agent: classification
+    - agent: metadata

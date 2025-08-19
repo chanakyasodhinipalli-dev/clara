@@ -1,0 +1,6 @@
+docTypeCode,docTypeDescription,requiredKeywords,optionalKeywords,assumed,regulatoryRiskFlags
+KYC01,KYC Form,"passport,identity,kyc,id proof","customer,signature,issued",false,"KYC_Lapse"
+KYC02,Aadhaar Card,"aadhaar,uidai","india,card,gov",false,"KYC_Lapse"
+LA03,Loan Agreement,"loan,agreement,emi,interest","repayment,schedule,rate",false,"Confidentiality_Clause"
+INV01,Invoice,"invoice,total,amount","vendor,date,number",true,"Invoice_Validation"
+BL01,Utility Bill,"bill,electricity,water,utility","consumer,address,date",true,"Address_Validation"

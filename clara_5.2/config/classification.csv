@@ -1,0 +1,6 @@
+doctype_code,doctype_name,description,rule
+AAD,Aadhaar Card,Identification document|KYC document,aadhaar|uidai
+PAN,PAN Card,Income tax permanent account number,pan|income tax
+ADR,Address Proof,Proof of address,address|utility
+BNK,Bank Statement,Bank account statement,bank|statement
+IDG,Generic ID,Generic ID document,id|identity

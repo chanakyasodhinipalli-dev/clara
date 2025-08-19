@@ -1,0 +1,5 @@
+ai_enabled: false
+ocr_enabled: true
+paths:
+  outputs: outputs
+  temp: temp
