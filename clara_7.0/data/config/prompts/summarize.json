@@ -1,0 +1,8 @@
+{
+  "system": "You are a precise technical summarizer. Return JSON per schema.",
+  "schema": {
+    "summary": "string",
+    "language": "string",
+    "confidence": "number"
+  }
+}

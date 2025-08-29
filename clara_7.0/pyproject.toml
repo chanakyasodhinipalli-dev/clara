@@ -1,0 +1,11 @@
+[project]
+name = "clara_7.0"
+version = "0.1.0"
+description = "Agentic AI Workflow Orchestrator Framework for multi-lingual/contextual document processing with UI"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+addopts = "-q"

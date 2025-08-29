@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clara 7.0</title>
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  <script src="/static/js/app.js" defer></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+  <div class="max-w-6xl mx-auto p-6">
+    <h1 class="text-2xl font-bold mb-4">Clara 7.0 — Document Orchestrator</h1>
+
+    <form id="uploadForm" class="space-y-4" enctype="multipart/form-data">
+      <input type="file" name="file" id="file" class="border p-2 rounded w-full" required>
+      <button type="submit" class="px-4 py-2 rounded bg-indigo-600 text-white">Submit</button>
+    </form>
+
+    <div id="status" class="mt-4 text-sm text-gray-600">Status: idle</div>
+
+    <div id="downloads" class="mt-4"></div>
+
+    <div class="mt-6">
+      <details open class="mb-4">
+        <summary class="cursor-pointer font-semibold">Raw JSON Response</summary>
+        <pre id="jsonOut" class="bg-white p-3 rounded border overflow-auto text-xs"></pre>
+      </details>
+      <details class="mb-4">
+        <summary class="cursor-pointer font-semibold">Structured Table</summary>
+        <div id="tableOut" class="bg-white p-3 rounded border overflow-auto"></div>
+      </details>
+      <details class="mb-4">
+        <summary class="cursor-pointer font-semibold">PDF Preview</summary>
+        <div id="pdfViewer" class="bg-white p-3 rounded border">
+          <p class="text-sm text-gray-500">PDF preview appears here after processing.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+</body>
+</html>

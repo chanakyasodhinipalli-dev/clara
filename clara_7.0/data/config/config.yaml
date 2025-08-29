@@ -1,0 +1,20 @@
+ai_enabled: ${AI_ENABLED:true}
+ai_provider: ${AI_PROVIDER:gemini}  # openai|gemini
+log_level: ${LOG_LEVEL:INFO}
+
+ai:
+  openai:
+    api_key: ${OPENAI_API_KEY:}
+    api_base: ${OPENAI_API_BASE:https://api.openai.com/v1}
+  gemini:
+    api_key: ${GEMINI_API_KEY:AIzaSyAzCHjN2BVqfIQY6Tf98d4uUZbhdY0CSms}
+    api_base: ${GEMINI_API_BASE:https://generativelanguage.googleapis.com/v1beta}
+    model: ${GEMINI_MODEL:gemini-1.5-flash-latest}
+
+paths:
+  uploads_dir: workspace/uploads
+  outputs_dir: workspace/outputs
+
+thresholds:
+  metadata_confidence_min: 0.7
+  max_refine_retries: 2
