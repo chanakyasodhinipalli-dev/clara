@@ -1,0 +1,237 @@
+catalog_name: OnBoard360 Question Catalog
+version: 1.0.0
+owner: OnBoard360 AI
+notes: Schema for conversational intake → PydanticAI → Validation → Review.
+questions:
+- id: Q001
+  section: Partner
+  field_name: partner.full_name
+  question_text: What is your partner organization’s legal name?
+  type: string
+  required: true
+  validation_rules:
+    min_length: 3
+    max_length: 120
+    regex: ^[A-Za-z0-9 .,&()-]+$
+  examples:
+  - Acme Corporation
+  - Global Tech Partners LLC
+  help_text: Use the registered legal entity name as per contracts and invoices.
+  follow_up:
+  - Is this the exact legal entity (not a brand or DBA)?
+  pii: false
+  storage_path: postgres.forms.partner.full_name
+- id: Q002
+  section: Partner
+  field_name: partner.contact_email
+  question_text: What is the primary contact email for this onboarding?
+  type: email
+  required: true
+  validation_rules:
+    regex: ^[^@\s]+@[^@\s]+\.[^@\s]+$
+  examples:
+  - owner@acme.com
+  help_text: We’ll use this for review requests and status updates.
+  follow_up:
+  - Is this a distribution list? If yes, who is the owner?
+  pii: true
+  storage_path: postgres.forms.partner.contact_email
+- id: Q003
+  section: UseCase
+  field_name: use_case.title
+  question_text: Briefly name the use case or project title.
+  type: string
+  required: true
+  validation_rules:
+    min_length: 5
+    max_length: 120
+  examples:
+  - eKYC Document Upload
+  - Mortgage Statements Archive
+  help_text: One short line that identifies the work.
+  follow_up:
+  - Add a few words so reviewers can understand scope at a glance.
+- id: Q004
+  section: UseCase
+  field_name: use_case.description
+  question_text: Describe the use case in 2–4 sentences.
+  type: string
+  required: true
+  validation_rules:
+    min_length: 20
+    max_length: 1000
+  examples:
+  - Partners will upload eKYC docs via API; system validates and stores with retention
+    policy.
+  help_text: Purpose, key actions, and systems involved.
+  follow_up:
+  - Which business line and regions are impacted?
+  storage_path: postgres.forms.use_case.description
+- id: Q005
+  section: Data
+  field_name: data.categories
+  question_text: Which data categories are involved?
+  type: list_enum
+  options:
+  - PII
+  - PCI
+  - PHI
+  - Public
+  - Confidential
+  - Restricted
+  - Customer Docs
+  - Operational Data
+  required: true
+  validation_rules:
+    min_items: 1
+  examples:
+  - - PII
+    - Customer Docs
+  help_text: Select all that apply.
+  follow_up:
+  - If PII/PCI/PHI is selected, specify subtypes in the next questions.
+  storage_path: postgres.forms.data.categories
+- id: Q006
+  section: Data
+  field_name: data.contains_pii
+  question_text: Does the dataset contain PII?
+  type: boolean
+  required: true
+  validation_rules: {}
+  examples:
+  - true
+  help_text: Personally Identifiable Information (names, IDs, addresses).
+  follow_up:
+  - If yes, specify fields (e.g., PAN, SSN, Address).
+  conditional_rules:
+    show_if:
+      data.categories:
+        includes: PII
+- id: Q007
+  section: Governance
+  field_name: governance.retention_period
+  question_text: What is the required retention period?
+  type: enum
+  options:
+  - 3 months
+  - 6 months
+  - 1 year
+  - 3 years
+  - 5 years
+  - 7 years
+  - 10 years
+  - Indefinite
+  required: true
+  validation_rules: {}
+  examples:
+  - 7 years
+  help_text: As per RM/Governance. If unknown, choose 'Indefinite' and add notes.
+  follow_up:
+  - Provide the governing policy or record series link if available.
+  storage_path: postgres.forms.governance.retention_period
+- id: Q008
+  section: Capacity
+  field_name: capacity.estimated_monthly_volume_gb
+  question_text: Estimated monthly data volume (GB)?
+  type: number
+  required: true
+  validation_rules:
+    min_value: 1
+    max_value: 1000000
+  examples:
+  - 500
+  - 2000
+  help_text: Ballpark figure; we’ll refine during triage.
+  follow_up:
+  - Any seasonal spikes (month/quarter-end)?
+  storage_path: postgres.forms.capacity.estimated_monthly_volume_gb
+- id: Q009
+  section: Capacity
+  field_name: capacity.peak_tps
+  question_text: Expected peak transactions per second (TPS)?
+  type: number
+  required: false
+  validation_rules:
+    min_value: 0
+    max_value: 20000
+  examples:
+  - 50
+  - 250
+  help_text: If unknown, leave blank; we’ll stress-test in Load phase.
+  follow_up:
+  - Provide expected concurrency/users if TPS is unknown.
+- id: Q010
+  section: APG
+  field_name: apg.product_tier
+  question_text: Which APIGEE product tier do you need?
+  type: enum
+  options:
+  - Sandbox
+  - Bronze
+  - Silver
+  - Gold
+  - Platinum
+  required: true
+  validation_rules: {}
+  examples:
+  - Silver
+  help_text: Defines quotas and policies.
+  follow_up:
+  - Need external developer portal access?
+  storage_path: postgres.forms.apg.product_tier
+- id: Q011
+  section: Integration
+  field_name: integration.kafka_required
+  question_text: Do you need a Kafka topic?
+  type: boolean
+  required: true
+  validation_rules: {}
+  examples:
+  - true
+  help_text: For streaming/async processing.
+  follow_up:
+  - If yes, provide topic name pattern and retention.
+  storage_path: postgres.forms.integration.kafka_required
+- id: Q012
+  section: Integration
+  field_name: integration.kafka_topic_name
+  question_text: Provide the Kafka topic name (if required).
+  type: string
+  required: false
+  validation_rules:
+    regex: ^[a-z0-9._-]+$
+    max_length: 100
+  examples:
+  - onboard360.events.partnerA.v1
+  help_text: Lowercase letters, digits, dots, underscores, hyphens.
+  conditional_rules:
+    show_if:
+      integration.kafka_required: true
+  storage_path: postgres.forms.integration.kafka_topic_name
+- id: Q013
+  section: Timeline
+  field_name: timeline.go_live_date
+  question_text: Target go-live date (YYYY-MM-DD)?
+  type: date
+  required: false
+  validation_rules:
+    format: YYYY-MM-DD
+  examples:
+  - '2025-11-01'
+  help_text: Estimate; used for planning and capacity reservations.
+  follow_up:
+  - Any critical milestones before go-live?
+- id: Q014
+  section: Attachments
+  field_name: attachments.links
+  question_text: Any relevant links (Confluence/Jira/specs)?
+  type: list_url
+  required: false
+  validation_rules:
+    max_items: 10
+  examples:
+  - - https://confluence.example.com/x/abc
+    - https://jira.example.com/browse/PRJ-123
+  help_text: Paste hyperlinks; we’ll archive in Confluence and reference in Jira.
+  follow_up:
+  - Upload any mandatory templates if links don’t exist.
