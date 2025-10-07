@@ -1,0 +1,530 @@
+
+# 💡 Copilot Prompt — Build “Onboard360 AI” Role‑Based Web App
+# (React Frontend + Python FastAPI Backend, Casbin RBAC, Static Users, Mock/API Switch)
+
+You are an expert full‑stack engineer. Generate a **production‑ready** web application named **`onboard360-ai`** that implements the following **end‑to‑end**, with **zero TODOs** and runnable on Windows/macOS/Linux.
+
+---
+
+## 0) Architecture & Tech Stack
+
+**Frontend**
+- React + TypeScript + Vite
+- React Router
+- Zustand (or Redux Toolkit) for client state
+- React Query for data fetching
+- Headless UI (or Radix UI) components
+- chart.js for charts
+- Accessible, responsive styling (Tailwind or CSS modules)
+
+**Backend (Python)**
+- **FastAPI** for REST APIs
+- **pycasbin** for RBAC authorization with `model.conf` + `policy.csv`
+- **passlib[bcrypt]** for password hashing
+- **PyJWT** (or `python-jose`) for JWT (HS256)
+- **pydantic** for request/response models
+- **uvicorn** as ASGI server
+- **structlog** for structured logging
+- Static users + fixtures in JSON (in-memory repo); can be swapped to DB later
+- Configurable **DATA_SOURCE=mock|api** to switch between mock data and “live” handlers that do simple in-memory persistence
+
+**Common**
+- JWT stored in **httpOnly** cookie + CSRF header (double‑submit pattern) for writes
+- Per‑role/per‑tab feature flags from server `/api/config`
+- Seed data for all roles and flows
+- Unit tests (pytest) and minimal e2e sanity (Playwright/Cypress for UI optional)
+
+---
+
+## 1) Roles, Users & Navigation
+
+**Roles**
+- `partner_user`
+- `onboarding_team_member`
+- `icmp_leadership`
+- `product_owner` (+ alias `scrum_master` if needed)
+
+**Static Demo Users (in `server/app/data/users.json`)**
+- Partner: `partner1 / P@ssw0rd!` → role `partner_user`
+- Team Member: `team1 / P@ssw0rd!` → role `onboarding_team_member`
+- Leadership: `lead1 / P@ssw0rd!` → role `icmp_leadership`
+- PO/SM: `po1 / P@ssw0rd!` → role `product_owner`
+
+Store hashed passwords and include plaintext as a comment in fixtures solely for demo.
+
+**Header**
+- Show “Welcome to **Onboard360 AI**, a one‑stop for all your ICMP Onboarding Journey”
+- Show logged‑in user + role, Logout button
+
+**Horizontal tabbed navigation — varies by role (render only if RBAC allows).**
+
+---
+
+## 2) RBAC with Casbin (pycasbin)
+
+Create `server/app/casbin/model.conf`:
+
+```
+[request_definition]
+r = sub, obj, act
+
+[policy_definition]
+p = sub, obj, act
+
+[role_definition]
+g = _, _
+
+[policy_effect]
+e = some(where (p.eft == allow))
+
+[matchers]
+m = g(r.sub, p.sub) && r.obj == p.obj && r.act == p.act
+```
+
+Create `server/app/casbin/policy.csv` (examples):
+
+```
+p, partner_user, partner:dashboard, read
+p, partner_user, partner:raise_intake, write
+p, partner_user, partner:track, read
+p, partner_user, partner:my_actions, read
+
+p, onboarding_team_member, otm:dashboard, read
+p, onboarding_team_member, otm:sprint, read
+p, onboarding_team_member, otm:my_actions, read
+p, onboarding_team_member, otm:team_actions, read
+
+p, icmp_leadership, lead:dashboard, read
+p, icmp_leadership, lead:my_actions, read
+
+p, product_owner, po:dashboard, read
+p, product_owner, po:sprint, read
+p, product_owner, po:my_actions, read
+p, product_owner, po:team_actions, read
+```
+
+Bind users to roles in app logic (from `users.json`) or extend with `g, username, role` entries.
+
+Implement a **FastAPI dependency** `authorize(obj: str, act: str)` that:
+- reads the current user’s role from the JWT
+- calls `enforcer.enforce(role, obj, act)`
+- raises `HTTPException(403)` on deny
+
+Use **route‑local permissions** like `obj='partner:dashboard'`, `act='read'`.
+
+---
+
+## 3) Data Models (shared semantics)
+
+Define pydantic models in `server/app/models.py`:
+
+```py
+class Stage(BaseModel):
+    name: str
+    state: Literal['completed', 'ongoing', 'todo']
+    health: Optional[Literal['green', 'yellow', 'red']] = None
+
+class Intake(BaseModel):
+    key: str
+    summary: str
+    status: str
+    fixVersion: Optional[str] = None
+    targetVersion: Optional[str] = None
+    ownerUserId: str
+    lob: Optional[str] = None
+    stages: List[Stage] = []
+
+class ActionItem(BaseModel):
+    id: str
+    title: str
+    relatedKey: Optional[str] = None
+    assignee: str
+    dueDate: Optional[date] = None
+    status: str
+    details: str
+
+class Task(BaseModel):
+    id: str
+    title: str
+    status: str
+    owner: str
+    relatedKey: Optional[str] = None
+    storyPoints: Optional[int] = None
+    sprint: Optional[str] = None
+
+class Feature(BaseModel):
+    key: str
+    name: str
+    riskLevel: Optional[str] = None
+    delayed: Optional[bool] = False
+    tasks: List[Task] = []
+
+class User(BaseModel):
+    id: str
+    username: str
+    role: str
+    fullName: str
+```
+
+---
+
+## 4) Backend — API Contracts & Implementations (FastAPI)
+
+### 4.1 Auth & Session
+
+**Endpoints**
+- `POST /api/auth/login` `{ username, password } -> { user, token }`
+- `POST /api/auth/logout` clears cookie
+- `GET  /api/me` → current user info (from jwt)
+
+**Logic**
+- Verify username/password against static `users.json` (bcrypt)
+- Issue JWT (HS256) with claims: `sub=user.id`, `uname`, `role`, `exp`
+- Set JWT in **httpOnly cookie**; also return token in body for dev
+- CSRF: for any **state‑changing** method (POST/PUT/DELETE), require header `x-csrf` == value from cookie `csrf_token`
+
+### 4.2 Config
+- `GET /api/config -> { dataSource, featureFlagsPerRole }`
+  - Read from `config/features.json` and `.env` (`DATA_SOURCE`)
+
+### 4.3 Partner (Protected by RBAC)
+- `GET  /api/partner/dashboard -> { draft, submitted, completed, list: [Intake] }`
+- `POST /api/partner/intakes -> Intake` (create; accepts partial from chatbot form)
+- `GET  /api/partner/intakes -> [Intake]` (for Track my Intakes)
+- `GET  /api/partner/action-items -> [ActionItem]`
+
+### 4.4 Onboarding Team Member (OTM)
+- `GET /api/otm/dashboard -> { totals, tasks, pendingPartnerResponses, myPending, teamPending }`
+- `GET /api/otm/sprint -> [Feature]`
+- `GET /api/otm/my-action-items -> [ActionItem]`
+- `GET /api/otm/team-action-items -> [ActionItem]`
+
+### 4.5 Leadership
+- `GET /api/lead/dashboard -> { charts: { intakesByStatus, intakesByLob, intakesByLobStatus, ongoingFeatures, featuresInRisk, delayedFeatures, trends } }`
+- `GET /api/lead/my-action-items -> [ActionItem]`
+
+### 4.6 Product Owner / Scrum Master
+- `GET /api/po/dashboard -> { charts: ... }` (scoped by team)
+- `GET /api/po/sprint -> [Feature]`
+- `GET /api/po/my-action-items -> [ActionItem]`
+- `GET /api/po/team-action-items -> [ActionItem]`
+
+### 4.7 Chatbot
+- `POST /api/chat/send { threadId?, message } -> { threadId, messages:[...] }`
+- `GET  /api/chat/history?threadId=...`
+- `POST /api/chat/upload` (multipart) -> `{ fileId, name, size }`
+- Mock behavior: echo + simple form template generation; store history per user in memory with optional disk persistence (`data/chat/threads.json`)
+
+---
+
+## 5) Backend — Implementation Details (FastAPI)
+
+**Project structure**
+```
+server/
+  app/
+    __init__.py
+    main.py
+    config.py
+    auth.py
+    deps.py
+    models.py
+    rbac.py
+    routers/
+      auth_routes.py
+      partner_routes.py
+      otm_routes.py
+      lead_routes.py
+      po_routes.py
+      chat_routes.py
+      config_routes.py
+    services/
+      repositories.py         # mock + in-memory “api” repos
+      partner_service.py
+      otm_service.py
+      lead_service.py
+      po_service.py
+      chat_service.py
+    data/
+      users.json
+      mock/
+        intakes.json
+        action_items.json
+        features.json
+        charts.json
+        chat_threads.json
+    casbin/
+      model.conf
+      policy.csv
+    static/
+      uploads/                # uploaded files
+    tests/
+      test_auth.py
+      test_rbac.py
+      test_partner.py
+  .env.example
+  requirements.txt
+```
+
+**Key modules**
+
+- `config.py` — reads env (`DATA_SOURCE`, `JWT_SECRET`, `AI_ENABLED`, `CSRF_ENABLED=true`) and loads `features.json`
+- `rbac.py` — initializes casbin enforcer; `authorize(obj, act)` dependency
+- `auth.py` — password hashing/verify; JWT encode/decode; CSRF helpers; cookie helpers
+- `deps.py` — `get_current_user()`, `require_auth()`, `authorize_dependency(obj, act)`
+- `services/*` — thin service layer over `repositories`
+- `repositories.py` — `MockRepo` (returns fixtures), `ApiRepo` (simple in-memory dicts with create/update), selected by `DATA_SOURCE`
+
+**Sample: `authorize_dependency`**
+
+```py
+def authorize_dependency(obj: str, act: str):
+    def _dep(user: User = Depends(get_current_user), enforcer: Enforcer = Depends(get_enforcer)):
+        if not enforcer.enforce(user.role, obj, act):
+            raise HTTPException(status_code=403, detail="Forbidden")
+        return True
+    return _dep
+```
+
+**Sample: Auth route snippets**
+
+```py
+@router.post("/auth/login", response_model=LoginResponse)
+def login(payload: LoginRequest, response: Response):
+    user = user_repo.get_by_username(payload.username)
+    if not user or not verify_password(payload.password, user.hashed_password):
+        raise HTTPException(401, "Invalid credentials")
+    token, csrf = issue_tokens(user)
+    set_session_cookies(response, token, csrf)
+    return {"user": public_user(user), "token": token}
+```
+
+**CSRF enforcement example (for state‑changing routes)**
+
+```py
+def require_csrf(request: Request):
+    csrf_cookie = request.cookies.get("csrf_token")
+    csrf_header = request.headers.get("x-csrf")
+    if not csrf_cookie or csrf_cookie != csrf_header:
+        raise HTTPException(403, "CSRF check failed")
+```
+
+Attach via `dependencies=[Depends(require_csrf)]` on POST/PUT/DELETE routes.
+
+**File uploads** saved to `static/uploads/` with UUID fileId; store metadata in repo.
+
+---
+
+## 6) Frontend — UI Requirements (React)
+
+**Global**
+- On boot, call `/api/config` to read `dataSource` and `featureFlagsPerRole`
+- Navbar tabs by role:
+  - **Partner**: Dashboard, Raise New Intake, Track my Intakes, My Action Items
+  - **OTM**: Dashboard, Current Sprint Activities, My Action Items, Team Action Items
+  - **Leadership**: Dashboard, My Action Items
+  - **PO/SM**: Dashboard, Current Sprint Activities, My Action Items, Team Action Items
+- Each tab corresponds to a route **permission key** used by RBAC on server (e.g., `partner:dashboard`)
+
+**Partner → Dashboard**
+- Cards showing counts: Draft, Submitted, Completed (for logged‑in user)
+- Clicking a number expands a **table below** with columns: Key, Summary, Status, Fix Version, Target Version
+
+**Partner → Raise New Intake**
+- Right‑side **Chatbot Drawer** with message list, input box, **file upload (drag/drop)**, quick prompts
+- Persist history (localStorage + `/api/chat`)
+
+**Partner → Track my Intakes**
+- **Collapsible list** of intakes
+- Title: `KEY — Summary`
+- Details: stage chips with states:
+  - `completed` → disabled + greyed
+  - `ongoing` → badge colored **green/yellow/red** per `health`
+  - `todo` → white
+
+**Action Items (for all roles)** 
+- Paginated, sortable table
+- Clicking a row opens **right‑panel** with details + **Chat** button
+
+**OTM → Current Sprint Activities**
+- Collapsible **by Feature**, nested Task rows
+- Each row has a **Chat** button
+
+**Leadership & PO Dashboards**
+- Multiple charts: Intakes by Status, Intakes by LOB, Intakes by LOB+Status (filter), Ongoing Features, Features in Risk, Delayed Features, Trends/Patterns
+
+**Accessibility**
+- Keyboard focus rings, ARIA on buttons/drawers/tabs; WCAG AA contrast
+
+---
+
+## 7) Config‑Driven Mock vs Runtime Data
+
+`.env` (example)
+```
+DATA_SOURCE=mock
+JWT_SECRET=dev-secret
+AI_ENABLED=false
+CSRF_ENABLED=true
+```
+
+`features.json` (server → `/api/config`)
+```json
+{
+  "partner": { "dashboard": "mock", "raiseIntake": "api", "track": "mock", "myActions": "api" },
+  "otm":     { "dashboard": "api", "sprint": "api", "myActions": "mock", "teamActions": "api" },
+  "lead":    { "dashboard": "api", "myActions": "api" },
+  "po":      { "dashboard": "api", "sprint": "api", "myActions": "api", "teamActions": "api" }
+}
+```
+
+Frontend respects flags when deciding which endpoints/paths to call (same URLs; server repo switches behavior).
+
+---
+
+## 8) Seed Data
+
+Provide realistic fixtures in `data/mock/*.json`:
+- 6–10 Intakes across `draft|submitted|completed` with `fixVersion`, `targetVersion`, `lob`
+- 3–5 Features with Tasks; some `riskLevel` and `delayed=true`
+- Action items distributed across roles
+- Pre‑computed chart payloads or compute from intakes/features
+
+---
+
+## 9) Project Structure (monorepo)
+
+```
+onboard360-ai/
+  client/                # React + TS + Vite
+    src/
+      app/
+        routes/          # role routes; each exposes permission key (e.g., 'partner:dashboard')
+      components/        # Tabs, Charts, Tables, Collapsible, RightPanel, ChatbotDrawer
+      store/
+      api/               # React Query hooks
+      styles/
+    index.html
+    vite.config.ts
+    package.json
+
+  server/                # FastAPI
+    app/
+      main.py
+      config.py
+      models.py
+      auth.py
+      deps.py
+      rbac.py
+      routers/
+        auth_routes.py
+        partner_routes.py
+        otm_routes.py
+        lead_routes.py
+        po_routes.py
+        chat_routes.py
+        config_routes.py
+      services/
+        repositories.py
+        partner_service.py
+        otm_service.py
+        lead_service.py
+        po_service.py
+        chat_service.py
+      data/
+        users.json
+        mock/
+          intakes.json
+          action_items.json
+          features.json
+          charts.json
+          chat_threads.json
+      casbin/
+        model.conf
+        policy.csv
+      static/uploads/
+      tests/
+        test_auth.py
+        test_rbac.py
+        test_partner.py
+    requirements.txt
+    .env.example
+
+  README.md
+  package.json           # root: concurrently start client + server
+```
+
+**Root scripts**
+- `npm run dev` → runs client and server concurrently (use `concurrently`)
+- `npm run client` / `npm run server`
+- `pytest` for backend tests
+
+**Server `requirements.txt`**
+```
+fastapi
+uvicorn
+pyjwt
+python-multipart
+pydantic
+passlib[bcrypt]
+pycasbin
+structlog
+python-dotenv
+pytest
+```
+
+---
+
+## 10) Quality Gates & Tests
+
+- mypy/ruff or flake8 + black
+- Unit tests:
+  - Auth: successful login, bad creds, `/me`
+  - RBAC: allow/deny per `policy.csv`
+  - Partner dashboard counts and table expansion shape
+- Optional Playwright/Cypress e2e for login and tab visibility per role
+
+---
+
+## 11) Build Commands & Run
+
+**Backend**
+```
+cd server
+python -m venv .venv
+. .venv/bin/activate  # (Windows: .venv\Scripts\activate)
+pip install -r requirements.txt
+cp .env.example .env
+uvicorn app.main:app --reload
+```
+
+**Frontend**
+```
+cd client
+npm i
+npm run dev
+```
+
+**Root**
+```
+npm i
+npm run dev   # spins both
+```
+
+---
+
+## 12) Deliverables Checklist (must be generated)
+
+- Full FastAPI code with routers/services/repos, pycasbin integration, JWT & CSRF
+- Casbin `model.conf` and `policy.csv` with permissions matching routes
+- Seed `users.json` (bcrypt) and realistic mock data in `data/mock/`
+- File upload handling with persisted metadata
+- `/api/config` powered by `.env` + `features.json`
+- React UI implementing all role tabs, dashboards, collapsibles, tables, right‑panel, and chatbot drawer
+- React Query hooks, protected routes, and auth flows
+- Accessibility and keyboard navigation for tabs/drawers
+- Tests (pytest) covering auth/rbac/core routes
+- README with screenshots placeholders
+
+**Generate all code, configs, seeds, tests, and docs now.**  
+**No TODOs or stubs — app must run out of the box with `DATA_SOURCE=mock`.**
