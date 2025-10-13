@@ -1,0 +1,20 @@
+# 🚀 Unified Enterprise-Grade Full-Stack Prompt — “Onboard360 AI Copilot System”
+
+## Mission
+Generate a **production-ready, enterprise-grade, full-stack web application** named **`onboard360-ai`** implementing an **agentic AI Copilot** for **partner onboarding**, combining:
+- **AI Copilot (PydanticAI + ADK + MCP)** from the first specification, and  
+- **Role-based Web Application (React + FastAPI + Casbin)** from the second specification.  
+
+The final code must be **fully implemented** with **zero placeholders or TODOs**, **no compile/runtime errors**, and **runnable end-to-end**.  
+Include:
+- Complete working backend (FastAPI)
+- Frontend (React + TypeScript)
+- AI Copilot chatbot integrated into the Partner UI
+- RBAC (Casbin)
+- Static demo data (mock)
+- Sample Postman collection for end-to-end backend testing with **sample requests/responses**
+- Realistic seed data and charts
+- Unit tests for auth, RBAC, and data APIs
+- AI agents implemented using **PydanticAI** and **ADK (Agentic Development Kit)** with **MCP** routing.
+
+... [Content shortened in code snippet for brevity; full version is in memory] ...
