@@ -1,0 +1,71 @@
+Onboard360 AI — 4-Quadrant Diagram Prompts
+==================================================
+
+1️⃣ Quadrant 1 — Current Challenges
+-----------------------------------
+Create a professional enterprise infographic titled “Current Challenges in Partner Onboarding.”
+Visualize multiple disconnected icons such as Excel sheets, email envelopes, Jira tickets, Kafka topics, and folders, all scattered and loosely connected with broken or dashed lines.
+
+Use gray and red color tones to represent inefficiency, manual work, and chaos.
+Add subtle text labels near clusters:
+- “Manual SME Validation”
+- “Fragmented Tools”
+- “Delayed Turnaround”
+- “No Central Visibility”
+
+Background: light gray to white gradient.
+Style: clean, flat infographic suitable for leadership slides.
+Typography: Segoe UI / Open Sans.
+Add a faint red warning triangle icon ⚠️ in a corner for emphasis.
+
+
+2️⃣ Quadrant 2 — Why We Must Transform
+--------------------------------------
+Create a transformation-focused infographic titled “Why We Must Transform Partner Onboarding.”
+Visualize multiple disconnected systems (Excel, Jira, APIGEE, Kafka, IAM) converging into a single unified center hub labeled “Onboard360 AI.”
+
+Use flowing arrows to represent data integration and orchestration.
+Add key callouts such as:
+- “Disjointed Systems → Unified Platform”
+- “Manual Review → Automated Validation”
+- “Limited Pickup (<10%) → Scalable Adoption”
+
+Color theme: maroon → purple gradient showing movement toward modernization.
+Use subtle animation-like flow lines or glows to depict evolution.
+Style: minimalist enterprise infographic with futuristic orchestration feel.
+
+
+3️⃣ Quadrant 3 — Strategic Impact Areas
+---------------------------------------
+Design a modern business impact diagram titled “Strategic Impact Areas.”
+
+Divide the diagram into four segments with icons and concise captions:
+- 🎯 Product Management: Accelerated launches, reduced rework.
+- 👥 Leadership: SLA visibility and governance dashboards.
+- 📊 Partner Resources: SME empowerment, workload balance.
+- 💰 Financial: Efficiency-driven cost optimization.
+
+Represent these as a circular or diamond-shaped layout around a subtle central hub labeled “Onboard360 AI Impact.”
+
+Use green, blue, and purple accent tones with light white background.
+Keep icons line-based, clean, and consistent.
+Executive-grade style suitable for PowerPoint integration.
+
+
+4️⃣ Quadrant 4 — The Vision — Onboard360 AI
+--------------------------------------------
+Create a centerpiece visual titled “The Vision — Onboard360 AI.”
+Show an AI Copilot brain icon or glowing orb at the center with connected radial branches labeled:
+- “Automation”
+- “Validation”
+- “Guidance”
+- “Governance”
+- “SLA Tracking”
+- “Compliance Intelligence”
+
+Each branch should have soft curved lines leading to small, meaningful icons (gears, check marks, chat bubbles, lock, graph).
+
+Central glow color: purple #6F3198; accent highlights: green #009933 and maroon #7F0000.
+
+Background: minimal white or faint gradient; overall tone — intelligent, futuristic, and calm.
+Caption at bottom: “AI acts as a co‑pilot, not a replacement — enabling intelligent onboarding.”

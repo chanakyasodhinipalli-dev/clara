@@ -1,0 +1,105 @@
+Onboard360 AI – Diagram Generation Prompts
+==================================================
+
+1️⃣ 4‑Quadrant Infographic — “Why Transform Partner Onboarding”
+---------------------------------------------------------------
+Create a professional 4‑quadrant infographic titled “Why Partner Onboarding Must Transform”.
+Each quadrant should have clean icons and minimal text captions with soft gradients.
+
+Quadrants:
+- Top Left (Current Challenges): Show fragmented icons like Excel, Email, Kafka, and Jira in disconnected circles — theme: “Manual, Fragmented, Inefficient”.
+- Top Right (Transformation Need): Flow arrows showing integration of multiple systems into a unified center. Theme: “Disconnected → Orchestrated”.
+- Bottom Left (Strategic Impact): Show measurable outcomes — dashboard visuals, SLA indicators, and leadership analytics.
+- Bottom Right (Vision – Onboard360 AI): Centered AI brain or copilot icon with automation, validation, guidance, and governance callouts.
+
+Use enterprise‑grade design (white background, deep maroon #7F0000, purple #6F3198, accent green #009933).
+Typography: Segoe UI / Open Sans, flat 2D look, minimalistic executive tone.
+
+
+2️⃣ Before → After Diagram — “From Manual Chaos to Unified Intelligence”
+-----------------------------------------------------------------------
+Design a horizontal Before → After process transformation visual.
+Left side shows chaos — messy flow of Excel sheets, emails, Kafka topics, and Jira tickets scattered around. Use muted gray tones.
+Right side shows Onboard360 AI hub connecting clean, organized icons for Intake, IAM, Metadata, SLA, and Governance — glowing purple/green lines to show orchestration.
+
+In the center, add a transformation arrow labeled “AI‑Driven Automation & Contextual Intelligence”.
+
+Caption below: “Transforming fragmented manual onboarding into a unified, intelligent ecosystem.”
+
+Keep modern enterprise look, with soft shadows, gradient backgrounds, and a white canvas.
+
+
+3️⃣ Circular Flow — “Onboard360 AI Copilot Orchestration”
+--------------------------------------------------------
+Generate a circular system diagram with “Onboard360 AI Copilot” in the center.
+Around the circle, add connected nodes labeled:
+- Partner Systems
+- SMEs & Reviewers
+- Leadership Dashboards
+- Governance & Compliance
+- Integration Services (APIGEE, Kafka, IAM)
+
+Each node connects to the central AI via curved glowing lines representing orchestration and intelligence.
+
+Background: subtle tech pattern with gradient (light gray → white).
+Central node should have an AI brain or copilot icon in purple glow.
+
+Style: minimalist / enterprise infographic, perfect for PowerPoint insertion.
+
+
+4️⃣ Automation Flow Diagram — “Agentic AI Lifecycle”
+---------------------------------------------------
+Create a vertical process flow diagram illustrating “Onboard360 AI Agentic Automation Lifecycle”.
+
+Stages:
+1. Intake Submission → 2. AI Validation → 3. Context Guidance → 4. SLA Tracking → 5. Governance Review → 6. Continuous Improvement.
+
+Each stage should have a clean icon and a connecting arrow.
+Color gradient: maroon → purple → green → blue, representing evolution toward intelligence.
+
+Include concise labels under each icon:
+- “AI validates fields in real time”
+- “SMEs guided contextually”
+- “SLAs auto‑tracked and escalated”
+- “Compliance & governance embedded”.
+
+Keep the background minimal, professional, and readable when embedded in PPT.
+
+
+5️⃣ Impact Dashboard Mockup — “Leadership Intelligence View”
+------------------------------------------------------------
+Design a realistic executive dashboard mockup representing leadership visibility in Onboard360 AI.
+
+Include charts and KPIs:
+- SLA Adherence (95%)
+- Intake Completion Rate (88%)
+- Compliance Score (99%)
+- Active Partners (120+)
+- Automation Benefit (↓ Manual Effort by 70%)
+
+Use clean card‑based layout, purple and maroon accents, and white background.
+Minimalist, futuristic feel — similar to enterprise data analytics dashboards.
+Add caption: “Real‑time visibility empowers leadership decisions.”
+
+
+6️⃣ Concept Illustration — “AI Empowering Humans”
+------------------------------------------------
+Artistic conceptual visual (flat vector or 3D) showing AI as a copilot supporting humans.
+Human figure working confidently with floating AI interface beside them, not replacing but assisting.
+
+Theme text: “AI as a Co‑Pilot, Not a Replacement”.
+
+Use soft blue, white, and purple hues.
+Emphasize trust, collaboration, and intelligence — not robotics or automation fear.
+Suitable as closing slide image.
+
+
+7️⃣ Optional Hero Banner for Deck Cover
+--------------------------------------
+Create a hero banner titled “Onboard360 AI — Redefining Partner Onboarding”.
+
+Abstract tech background with connected nodes, AI brain motif, and light gradient overlay in Wells Fargo maroon → purple.
+
+Subtitle: “Empowering partners, accelerating outcomes, unlocking intelligent automation.”
+
+Keep it clean, cinematic, and executive‑ready.
