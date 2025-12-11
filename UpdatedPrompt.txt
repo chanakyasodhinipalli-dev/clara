@@ -1,0 +1,174 @@
+Generate a premium, enterprise-grade architecture diagram for “ICMP – Enterprise Content Management Platform”. 
+The visual style must be modern, clean, icon-rich, well-aligned, high-contrast, and suitable for CTO/CIO presentations.
+
+Use:
+• Professional color palette (navy, royal blue, teal, grey, soft white backgrounds)
+• Smooth rounded rectangles
+• Consistent iconography (Material/Fluent/Google Cloud style icons)
+• Clear grouping with soft shadows
+• Perfectly aligned grid layout
+• Balanced white space
+• High readability
+• Minimal but elegant gradients
+• Thin connectors with arrowheads
+
+===========================================================
+TOP LAYER: DOCUMENT INGESTION (Use icons for each source)
+===========================================================
+Create a horizontal row titled **“Document Ingestion”**.
+
+Each item should be a rounded card with an icon:
+• ICMP UI (screen icon)
+• Apigee API Gateway (API icon)
+• NAS (storage icon)
+• Kafka Streams (stream icon)
+• Email (envelope icon)
+• Fax (printer icon)
+• KOFAX Capture (camera/scanner icon)
+• Iron Mountain (vault or archive icon)
+
+Arrows flow downward into the AI layer.
+
+===========================================================
+SECOND LAYER: ECM AI – iDocs Intelligence (Premium AI Block)
+===========================================================
+Create a wide, visually dominant AI block with a gradient.
+
+Label: **“ECM AI – iDocs Intelligence Services”**
+
+Include icons for each capability:
+• Document Classification (badge or layers icon)
+• Multi-context Classification (cluster icon)
+• Summarisation (document-sparkles icon)
+• AI Data Extraction (database-spark icon)
+• Signature Detection (signature icon)
+• Workflow Orchestration (pipeline icon)
+
+Add note:
+“Can run inside ICMP workflows or be invoked independently by upstream systems before ingestion.”
+
+===========================================================
+THIRD LAYER: ICMP CORE PROCESSING (Grid Layout with Icons)
+===========================================================
+Create a deep navy container titled **“ICMP Core Processing”**.
+
+Inside, draw neatly aligned cards (with icons):
+
+1. **API Services**
+   – Ingestion  
+   – Content Retrieval  
+   – Search / Retrieve / Export  
+   – Manual Re-index  
+   – Bulk Operations  
+   – Sensitive Data Masking  
+
+2. **ICMP UI**
+   – Manual Upload  
+   – Manual Re-index  
+   – Bulk Ops Console  
+
+3. **IVaaS (Image Viewer as a Service)**
+   – Secure Render  
+   – Upstream UI Embedding  
+   – Multi-format Viewing  
+
+4. **Transformation Services (TS)**
+   – Metadata Mapping  
+   – Normalization  
+
+5. **Conversion Services (CS)**
+   – Format Conversion  
+   – Split / Merge  
+
+6. **Content Data Services**
+   – OCR / ICR  
+   – Data Lift → MongoDB  
+
+7. **Retention Management (RM)**
+   – Retention Rules  
+   – Legal & Audit Holds  
+
+8. **Repository Services (RS)**
+   – CRUD Operations  
+   – **Dynamic Routing using LCR (Logical Content Regions)**  
+
+9. **Integration Manager (IM)**
+   – High-volume Migration  
+   – Bulk Update / Export  
+
+10. **ECM RISE Services**
+    – PAN → CRN Tokenization  
+    – Token-based Search  
+
+11. **Audit Services**
+    – Audit Trails  
+    – Compliance  
+
+12. **BPM Services**
+    – Data Modification Workflows  
+
+13. **Security Layer**
+    – SSO Authentication  
+    – Dynamic Security Model  
+
+14. **Relationship Mapping Engine**
+    Icons arranged as a network graph:
+    Documents ↔ Accounts ↔ Customers ↔ Deals ↔ Employees ↔ Contracts  
+
+15. **PAA Firewalls**
+    – Pre-ingestion Validation  
+    – Security Perimeter  
+
+Use icons for:
+• Security shields  
+• People/entities  
+• Document graph  
+• Settings/gear  
+• Workflow arrows  
+
+===========================================================
+BOTTOM LAYER: REPOSITORIES (Horizontal Row with Icons)
+===========================================================
+Each repository should be a light card with a storage/database icon:
+
+• FileNet  
+• Documentum  
+• CM8  
+• MARS  
+• Image Services  
+• CMIS  
+• CMOD  
+• Legacy Repositories  
+
+Arrows flow downward from Repository Services to these systems.
+
+===========================================================
+SIDE LAYER: KAFKA NOTIFICATIONS (Vertical Column)
+===========================================================
+Use stream or signal icons.
+
+Label:
+**Kafka Notifications**
+• Request-Level Events  
+• Document-Level Events  
+• Package-Level Events  
+
+===========================================================
+OVERALL VISUAL REQUIREMENTS
+===========================================================
+• Strong hierarchy with clear section titles  
+• Bold headings  
+• Icons visually consistent  
+• High contrast text (dark navy on white, white on navy)  
+• Slight shadow under each card  
+• Clean SaaS/cloud diagram feel similar to Google Cloud, Azure, or Gemini demos  
+• Presentation-grade clarity  
+• No text distortion  
+
+Output: One single, cohesive, enterprise-class architecture diagram.
+
+At the top of the diagram, include a centered title: 
+"ICMP – Enterprise Content Management Capabilities Matrix"
+
+Below it, include a subheading:
+"AI-Driven Ingestion, Processing, Security, Dynamic Routing, and Repository Services"
