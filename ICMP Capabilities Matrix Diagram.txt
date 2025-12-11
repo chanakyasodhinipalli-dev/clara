@@ -1,0 +1,192 @@
+ICMP Capabilities Matrix Diagram (With Re-Indexing, Bulk Ops & ECM AI iDocs)
+
+Create a detailed enterprise capabilities matrix diagram for an ECM platform named “ICMP”.
+The diagram should be visually clean, modern, color-coded, and suitable for executive architecture presentations.
+Show the full lifecycle: Ingestion → Processing → AI Capabilities → Repository → Notifications → Operations.
+
+⸻
+
+1. Title & Style
+
+Title: “ICMP – Enterprise Content Management Capabilities Matrix”
+Subtitle: “Document Ingestion, AI Intelligence, Processing, Compliance, Repository Services, and Notifications”
+Use a high-resolution, modern, minimalist enterprise design.
+
+⸻
+
+2. Ingestion Channels (Top Row)
+
+Depict these as top-level input sources:
+	•	ICMP UI
+	•	Apigee API Gateway
+	•	NAS (Network Attached Storage)
+	•	Apache Kafka Streams
+	•	Email Ingestion
+	•	Fax
+	•	KOFAX Capture
+	•	Iron Mountain Scanning
+
+Connect all ingestion channels → ICMP Core Processing layer.
+
+⸻
+
+3. ICMP Core Processing & Services Matrix (Center Zone)
+
+Show as a color-coded matrix/table layout with each module and capabilities.
+
+API Layer
+	•	Handle ingestion requests
+	•	Endpoints for search, retrieve, export, split/merge, metadata updates
+	•	Supports manual re-index
+	•	Supports bulk operations at scale
+
+ICMP UI Module
+	•	Manual upload
+	•	Search & retrieve
+	•	Document preview
+	•	Supports manual re-indexing
+	•	Supports bulk operations for thousands/millions of documents
+	•	Operations console dashboards
+
+Transformation Services (TS)
+	•	Metadata mapping
+	•	Data normalization
+	•	Validations
+
+Conversion Services (CS)
+	•	Format conversion (PDF, TIFF, JPG)
+	•	Split & merge capabilities
+
+Retention Management (RM)
+	•	Apply retention rules automatically
+	•	Legal hold & audit hold workflows
+
+Repository Services (RS)
+	•	Intelligent routing to FileNet, Documentum, CM8, MARS, Legacy repositories
+	•	CRUD operations on documents & metadata
+
+Integration Manager (IM)
+	•	Large-scale ingestion & migration pipelines
+	•	Data updates
+	•	Bulk exports
+	•	Apply retention & legal holds during migration
+
+Audit Module
+	•	Full end-to-end audit trails
+	•	Data lineage & compliance tracking
+
+ECM RISE Services
+	•	PAN → CRN Tokenization
+	•	Secure storage & masked search
+	•	PAN/CRN searchable using dynamic token retrieval
+
+External Services Layer
+	•	Virus scan via DCT (before ingesting PAA or user uploads)
+	•	Other external checks
+
+Content Data Services (OCR/ICR + MongoDB Data Lift)
+	•	OCR/ICR extraction for both managed & unmanaged documents
+	•	Push extracted data into MongoDB
+	•	Intelligent metadata enrichment
+
+⸻
+
+⭐ 4. New Section – ECM AI Capabilities (iDocs Suite)
+
+Add a prominent, visually distinct block titled:
+
+“ECM AI – iDocs Intelligence Services (within ICMP Profile or Independent Invocation)”
+
+List AI capabilities:
+
+Document Classification
+	•	Classification for untrusted documents
+	•	Single-context and multi-context document handling
+	•	Confidence scoring & multi-label classification
+
+Summarisation
+	•	Contextual document summarisation
+	•	Multi-document summary generation
+
+AI Data Extraction
+	•	Field-level data extraction using ML
+	•	Cross-document entity matching
+	•	Multi-context extraction
+
+Signature Presence Detection
+	•	AI-powered signature identification
+	•	Bounding box detection
+	•	Valid/invalid signature confidence
+
+AI Workflow Orchestration Pipeline
+	•	Multi-step workflow pipeline creation
+	•	Automated routing based on AI insights
+	•	Pre-ICMP evaluation of documents for upstream systems
+
+Invocation Modes
+Show explicitly:
+	•	Can run as part of ICMP workflow
+	•	Or invoked independently by upstream systems before ICMP ingestion
+
+This makes it clear that AI iDocs is both embedded and decoupled.
+
+⸻
+
+5. Security & Compliance Overlays
+
+Add icon-based callouts for:
+	•	Virus scanning via DCT
+	•	Tokenization via RISE
+	•	Retention enforcement
+	•	Audit & oversight
+
+⸻
+
+6. Repositories (Bottom Section)
+
+Draw outputs leading to:
+	•	ICMP FileNet
+	•	Documentum
+	•	CM8
+	•	MARS
+	•	Legacy Repositories
+
+⸻
+
+7. Notifications Layer
+
+Add a Kafka Notifications section:
+	•	Request-level notifications
+	•	Document-level notifications
+	•	Package-level notifications
+	•	Configurable event triggers
+
+⸻
+
+8. Additional Capabilities to Highlight
+
+Include a small block stating:
+	•	Search & Retrieve
+	•	Export
+	•	Split & Merge
+	•	Metadata update
+	•	High-scale migrations
+	•	Manual re-index
+	•	Bulk operations
+	•	Intelligent metadata enrichment
+	•	AI-driven document intelligence
+
+⸻
+
+🎨 FINAL COPY–PASTE GENERATION PROMPT
+
+Generate a high-resolution enterprise capabilities matrix diagram for an ECM platform called “ICMP”.
+Include ingestion channels (ICMP UI, Apigee Gateway, NAS, Kafka, Email, Fax, KOFAX Capture, Iron Mountain).
+Show ICMP Core Modules: API, ICMP UI, Transformation Services (TS), Conversion Services (CS), Repository Services (RS), Retention Management (RM), Integration Manager (IM), Audit, ECM RISE Services, External Services, Content Data Services.
+Highlight manual re-indexing and bulk operations supported through UI and API.
+Add a full ECM AI layer named “iDocs Intelligence Services” containing: document classification for untrusted content, single-context and multi-context classification, summarisation, AI data extraction, AI workflow orchestration pipeline, signature presence detection.
+Show that iDocs can run inside ICMP or be invoked by upstream systems independently.
+Include virus scanning (DCT), PAN→CRN tokenisation (RISE), OCR/ICR data lift into MongoDB, repository routing to FileNet, Documentum, CM8, MARS, Legacy repos.
+Add Kafka notifications at request/document/package level.
+Depict all capabilities in a color-coded matrix with arrows illustrating the full lifecycle from ingestion → AI → processing → repositories → notifications.
+Use a clean, modern, minimalist enterprise architecture style.
