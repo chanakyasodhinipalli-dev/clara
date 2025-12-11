@@ -1,0 +1,196 @@
+⭐ GEMINI-LEVEL ENTERPRISE VISUAL QUALITY PROMPT FOR ICMP CAPABILITIES MATRIX
+
+Generate a high-resolution, enterprise-grade architecture diagram titled
+“ICMP – Enterprise Content Management Capabilities Matrix”.
+The visual style must match modern Google Gemini architecture diagrams: clean, sharp, minimalistic, icon-rich, with excellent color contrast, perfect spacing, smooth rounded boxes, and professional layout.
+Use soft gradients, subtle shadows, and consistent iconography across the entire diagram.
+
+⸻
+
+🎨 VISUAL DESIGN REQUIREMENTS (VERY IMPORTANT)
+	•	Extremely clean enterprise SaaS architecture look
+	•	Symmetrical grid alignment and perfect spacing between components
+	•	Consistent icon sets (Material/Fluent/Carbon)
+	•	Soft shadows + frosted surfaces (not harsh or cartoonish)
+	•	High contrast text
+	•	Minimal text per box
+	•	Smooth connector arrows using subtle gradients
+	•	Use color-coded grouping for modules
+	•	Every section must appear balanced and visually premium
+	•	No distorted or broken text
+	•	No overlapping shapes
+	•	Heatmap-style grouping is preferred
+
+⸻
+
+🧩 STRUCTURE TO DRAW EXACTLY
+
+⸻
+
+1. DOCUMENT INGESTION LAYER (Top Row)
+
+Show 8 ingestion sources as uniform rounded rectangular blocks with icons:
+	•	ICMP UI
+	•	Apigee API Gateway
+	•	NAS
+	•	Apache Kafka Streams
+	•	Email
+	•	Fax
+	•	Capture (KOFAX)
+	•	Iron Mountain
+
+All arrows point down to the ICMP Core Processing layer.
+
+⸻
+
+2. ECM AI – iDocs Intelligence Layer (Prominent Block)
+
+Place this layer just below ingestion, centered, wide rectangle with a modern gradient.
+
+Include icons + short bullet points:
+	•	Document Classification (single & multi-context)
+	•	Summarisation
+	•	AI Data Extraction
+	•	Signature Presence Detection
+	•	AI Workflow Orchestration Pipeline
+	•	Can run inside ICMP or invoked independently by upstream systems
+
+Use AI/ML-style colors (blue–purple gradient).
+
+⸻
+
+3. ICMP CORE PROCESSING LAYER (Large Section With Multiple Groups)
+
+Draw a wide background block labeled “ICMP Core Processing” and inside it place grouped modules with icons:
+
+API Module
+	•	Ingestion handling
+	•	Content retrieval services
+	•	Search / retrieve / export
+	•	Split & merge
+	•	Manual re-index
+	•	Bulk operations
+	•	Sensitive data masking patterns
+
+ICMP UI
+	•	Manual upload
+	•	Manual re-index
+	•	Bulk ops console
+	•	Document preview
+
+IVaaS (Image Viewer as a Service)
+	•	Secure render
+	•	Upstream UI viewing
+	•	Multi-format support
+
+Transformation Services (TS)
+	•	Metadata mapping
+	•	Normalization rules
+	•	Validation pipelines
+
+Conversion Services (CS)
+	•	Format conversion
+	•	Split / merge
+
+Content Data Services
+	•	OCR / ICR
+	•	Data lift → MongoDB
+	•	Metadata enrichment
+
+Retention Management (RM)
+	•	Retention rules
+	•	Legal & audit holds
+
+Repository Services (RS)
+	•	CRUD operations
+	•	Dynamic repository routing using LCR (Logical Content Regions)
+	•	Repository abstraction
+
+Integration Manager (IM)
+	•	High-volume migration
+	•	Bulk update / export
+	•	Operational pipelines
+
+ECM RISE Services
+	•	PAN → CRN Tokenization
+	•	Masked search
+	•	Secure financial data flow
+
+Audit Services
+	•	Compliance trails
+	•	Data lineage
+
+BPM Services
+	•	Business data modifications
+	•	Workflow-based updates
+
+Security Layer
+	•	SSO-based authentication
+	•	Dynamic security model
+
+Relationship Graph Layer
+
+Show a small cluster with node icons:
+
+Documents ↔ Account ↔ Customer ↔ Deal ↔ Employee ↔ Contract Entity ↔ Contract Number
+(Represent many-to-many mapping visually.)
+
+PAA Firewalls
+	•	Security perimeter
+	•	Pre-ingestion validation
+
+⸻
+
+4. OUTPUT REPOSITORIES (Bottom Row)
+
+Show repository blocks with distinct icons:
+	•	FileNet
+	•	Documentum
+	•	CM8
+	•	MARS
+	•	Image Services
+	•	CMIS
+	•	CMOD
+	•	Legacy Repositories
+
+Arrows flow downward from RS to these repositories.
+
+⸻
+
+5. EVENTS & NOTIFICATIONS
+
+Add a side or bottom block:
+
+Kafka Notifications
+	•	Request-level
+	•	Document-level
+	•	Package-level
+
+Use event-stream icons.
+
+⸻
+
+⭐ COLOR PALETTE REQUIREMENT (This boosts Gemini-level quality)
+
+Use professional enterprise colors:
+	•	Deep Navy (#0A1A2F)
+	•	Azure Blue (#3A7AFE)
+	•	Teal (#2BBBAD)
+	•	Slate Gray (#6C7A89)
+	•	Steel (#A8B0BA)
+	•	Gold Accent (#E8B200)
+	•	Soft Neutrals for backgrounds
+
+Each module group should have its own soft gradient card.
+
+⸻
+
+⭐ FINAL COPY–PASTE PROMPT (Use THIS EXACT TEXT for Gemini-quality visuals)
+
+Generate a Gemini-quality enterprise architecture diagram titled “ICMP – Enterprise Content Management Capabilities Matrix”. Use a clean, premium, icon-rich design with perfect alignment, soft shadows, and gradient backgrounds. Include the following layers:
+• Ingestion Layer: ICMP UI, Apigee API Gateway, NAS, Apache Kafka Streams, Email, Fax, KOFAX Capture, Iron Mountain
+• ECM AI – iDocs Intelligence Layer: classification (single & multi-context), summarisation, AI data extraction, signature detection, workflow orchestration, callable within ICMP or independently
+• ICMP Core Processing Layer with grouped modules: API, ICMP UI, IVaaS, Transformation Services, Conversion Services, Content Data Services, Retention Management, Repository Services (with LCR dynamic routing), Integration Manager, ECM RISE Services, Audit, BPM Services, Security Layer (SSO + dynamic security), relationship graph (documents ↔ account ↔ customer ↔ deal ↔ employee ↔ contract), PAA Firewalls
+• Output Repositories: FileNet, Documentum, CM8, MARS, Image Services, CMIS, CMOD, Legacy Repositories
+• Kafka Notifications (request/document/package level)
+Use enterprise-grade colors (navy, azure, teal, slate, gold accents), consistent icons, balanced groupings, clean arrows, and a polished SaaS architecture aesthetic similar to Google Gemini visual diagrams.
