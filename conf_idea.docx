@@ -1,0 +1,366 @@
+Onboard360AI — KB Reorganization & Governance Design
+ 
+Onboard360AI
+Knowledge Base Reorganization & Governance Design
+Migration to a governed, single-source onboarding KB on iCanvas + Confluence
+
+Status: Draft for review
+Owner: Chanakya
+Platform: iCanvas agentic platform (Claude architecture + skills)
+
+Contents
+
+1. Purpose & Scope
+Onboarding content for enterprise products is currently scattered across multiple Confluence spaces, ServiceNow knowledge articles, databases and spreadsheets, owned by different internal teams. The content is distributed, frequently duplicated, and in many cases outdated. This document defines the target design for consolidating that content into a single governed knowledge base (KB) that the iCanvas agentic platform uses to power multiple chatbots.
+The chosen strategy is migration into one canonical KB, fronted by a gated intake pipeline so that new and updated content is reviewed and approved before it can ever reach a chatbot. Skills are deliberately designed as micro, single-responsibility, reusable units rather than one monolithic skill; agents compose them.
+2. Problem Statement
+• Onboarding content lives across multiple Confluence spaces owned by different teams, plus ServiceNow knowledge articles, databases and Excel sheets.
+• Content is duplicated across systems and often outdated, with no single source of truth.
+• There is no consistent governance: anyone can edit, and there is no enforced review/approval before content is consumed.
+• The iCanvas platform needs a trustworthy, deduplicated, access-controlled KB to drive skills, agents and multiple chatbots.
+3. Architectural Decision
+Three consolidation patterns were considered: physical migration into one store, federation (index across systems in place), and a curated canonical layer fed by the messy sources. For onboarding content the decision is full migration into one canonical KB with a gated intake pipeline.
+Key insight: migration and ongoing intake are not two systems. The one-time migration is a high-volume run through the same lifecycle pipeline built for new content. Build the lifecycle first; treat migration as a seeding event through it.
+4. Content Lifecycle
+Every knowledge unit moves through a single state machine. The hard rule that makes the whole system safe: chatbots only ever retrieve units in the Published state. Everything else is invisible to them.
+Draft → Submitted → In Review → Approved → Published  →  (Review-due / Quarantined / Archived)
+State transitions are owned by iCanvas (workflow metadata). Content lives in Confluence. The two are linked but separated in concern: Confluence owns content and version history; iCanvas owns process, state and actor history.
+5. Two-Space Confluence Model
+Confluence is a write-locked serving layer; iCanvas is the system of record for the workflow. Two spaces separate workflow stage from read-scope:
+Space
+Writable by
+Readable by
+Holds
+Staging
+iCanvas service account only
+Admin / authoring staff (read-only); not bots, not general audience
+Draft, Submitted, In Review, Approved
+Published
+iCanvas service account only
+Everyone incl. bots (read-only)
+Published only
+ 
+Defence in depth: the bot retrieval path requires BOTH that a page is in the Published space AND that its state property = Published. Even if a draft were ever mis-filed, an unstamped page is never surfaced.
+• Write access to both spaces is exclusive to the iCanvas service account — so "edit only through iCanvas" is physically enforced, not merely policy.
+• Admins and authoring staff get read-only on Staging for oversight; every actual mutation still flows through iCanvas.
+6. Roles, Authorization & Segregation of Duties
+6.1 Roles
+Four distinct roles. Submitter is universal; the other three are category-scoped (per product/domain).
+Role
+Who
+Scope
+Submitter
+Everyone in the user group
+Universal — no grant required
+Reviewer
+Few, per category
+Category-scoped
+Approver
+Few, per category
+Category-scoped
+Publisher
+Few, per category
+Category-scoped
+ 
+A permission is the pair (role, category) — e.g. “approver for HelixOS onboarding.” Two independent dimensions per user: role grants and category scope.
+6.2 Two-person approval & segregation of duties
+Approval is two-person. The segregation rule: on a single unit's journey, no individual may occupy more than one of the four gate roles. If a person submitted a unit, they cannot review, approve or publish it; if they reviewed it, they cannot also approve it, and so on.
+Enforcement at every gate is two stacked checks, both deterministic (hard code, not agent judgment):
+1. Authorization — the actor must hold the required (role, category) grant for this unit's category.
+2. Segregation of duties — the actor must not appear in this unit's prior-actor history.
+Both must pass or the transition is blocked.
+6.3 Thin-category edge case
+Where a category has too few eligible people to satisfy SoD, use a documented override role: an admin may waive SoD, but only with a mandatory audit-log entry. Overrides are never silent.
+7. Content Flow Rules
+7.1 Move-on-publish
+When a unit reaches Approved, the publishing skill moves (not copies) the page from Staging to Published, carrying its history. Exactly one canonical page exists per unit; there is no shadow copy to drift.
+7.2 Pull-back-to-Staging on update
+Editing a live page never happens in the Published space. An update starts a new workflow instance in Staging — a checked-out copy of the published page — and runs the full four-gate pipeline. The live page stays untouched and bot-visible throughout, then is overwritten atomically on re-approval.
+8. Migration Approach
+Migration is a one-time bulk seeding run through the same lifecycle, executed by the Migration Agent. It is deliberately not an auto-publish.
+3. Connect & extract — pull items from each source system (Confluence spaces, ServiceNow KB, databases, Excel) via connectors.
+4. Normalize — each legacy item enters as a Submitted draft in Staging, conformed to the knowledge-unit schema, with a back-pointer to its origin.
+5. Tag — auto-classify product/category, audience, onboarding stage and content type; low-confidence tags flagged for human confirmation.
+6. Cluster for dedup — semantic + metadata clustering groups near-duplicate and conflicting items; clusters are presented to domain owners.
+7. Batch review & merge — domain owners (with SoD enforced) decide which item is authoritative, merge or supersede the rest, and resolve conflicts using a per-category precedence rule.
+8. Publish — approved units go through move-on-publish; superseded items are archived, not deleted.
+9. Hand off to steady state — once seeded, the Freshness/Lifecycle Agent keeps the KB from rotting; all subsequent change flows through normal intake.
+Rationale: entering legacy content as drafts (never auto-published) guarantees no unreviewed or duplicated content reaches a chatbot during the cleanse. It is more work up front, but it is a one-time cost and the freshness agent sustains the result.
+9. Skills Catalogue (Micro & Reusable)
+Skills are single-responsibility and composable. No skill both decides and acts on a gate; authorization (S6) and segregation of duties (S7) are deliberately separate so they can be reused at every gate. Agents (Section 10) orchestrate these skills.
+#
+Skill
+One-line responsibility
+S1
+normalize-to-knowledge-unit
+Raw input → canonical schema
+S2
+auto-tag-unit
+Classify category/audience/stage/type
+S3
+detect-duplicates
+Find overlaps; advise, never merge
+S4
+diff-against-published
+Describe an update vs the live version
+S5
+validate-against-template
+Completeness check by content type
+S6
+check-authorization
+Verify (role, category) grant
+S7
+check-segregation-of-duties
+No actor twice on one unit
+S8
+transition-state
+Legal state moves + actor history
+S9
+publish-to-confluence
+Move-on-publish via service account
+S10
+pullback-to-staging
+Start an update cycle safely
+S11
+archive-superseded-unit
+Retire replaced units (no delete)
+S12
+stamp-review-date
+Set freshness/expiry on publish
+S13
+scan-freshness
+Find review-due / expired units
+S14
+quarantine-stale-unit
+Pull stale content out of bot scope
+S15
+notify-actor
+Targeted notification to the right person
+S16
+retrieve-published
+The only chatbot read path
+S17
+record-audit-event
+Immutable audit append
+
+9.1 Skill specifications
+S1 — normalize-to-knowledge-unit
+Purpose. Convert a raw contribution (free text, pasted article, imported ServiceNow/Confluence/Excel/DB record) into the canonical knowledge-unit schema. Pure transformation only.
+Inputs: Raw content + source metadata (origin system, original URL/ID, captured fields).
+Outputs: A draft knowledge unit conforming to the schema, with source pointer preserved. No state assigned beyond Draft.
+Core logic:
+• Map source fields to canonical fields; split monolithic source pages into atomic units where one page covers multiple topics.
+• Preserve a back-pointer to the original source system and ID for traceability.
+• Leave unknown fields empty rather than guessing; flag missing required fields for the tagging skill.
+Hard constraints (must not):
+• Never assign tags, ownership, or lifecycle decisions — that is other skills' job.
+• Never write to Confluence or change any state.
+• Never invent content not present in the source.
+Reused by: Intake/Authoring Agent, Migration Agent.
+S2 — auto-tag-unit
+Purpose. Classify a normalized unit along the metadata dimensions that drive scoping, routing and freshness.
+Inputs: A normalized knowledge unit.
+Outputs: The same unit enriched with product, audience, onboarding-stage, content-type and candidate-owner/category tags, each with a confidence score.
+Core logic:
+• Assign category (product/domain) — this single tag drives reviewer/approver/publisher routing downstream.
+• Tag audience and onboarding stage to support chatbot scoping later.
+• Emit confidence scores; low-confidence tags are surfaced to the contributor or reviewer rather than committed silently.
+Hard constraints (must not):
+• Never finalize ownership without a human confirmation step when confidence is low.
+• Never alter the body content; tagging is metadata-only.
+Reused by: Intake/Authoring Agent, Migration Agent, Review-Support Agent (re-tag on update).
+S3 — detect-duplicates
+Purpose. Find existing units that overlap with an incoming one, so duplication is caught at the source instead of cleaned up later.
+Inputs: A candidate unit + the published/approved corpus index.
+Outputs: A ranked list of overlapping units with similarity scores and the type of overlap (near-identical, partial, contradictory).
+Core logic:
+• Hybrid match: semantic similarity plus metadata (same product + stage raises weight).
+• Classify each hit as duplicate, partial-overlap, or potential-conflict.
+• Return candidates only — the merge/supersede decision is always human.
+Hard constraints (must not):
+• Never auto-merge or auto-delete any unit.
+• Never block submission; it advises, the workflow decides.
+Reused by: Intake/Authoring Agent (pre-submit warning), Migration Agent (batch clustering).
+S4 — diff-against-published
+Purpose. Produce a human-readable diff between a submitted update and the currently published version it intends to replace.
+Inputs: A submitted unit + its published counterpart (if any).
+Outputs: A structured diff (added / removed / changed) plus a plain-language change summary.
+Core logic:
+• Field-level and body-level diff; highlight changes to safety-critical or compliance-relevant sections.
+• Flag any claim that contradicts other published units (calls S3 conflict signal).
+Hard constraints (must not):
+• Never apply the change; it only describes it for the reviewer.
+• Never hide a change because it looks minor.
+Reused by: Review-Support Agent, Publishing Agent (pre-publish confirmation).
+S5 — validate-against-template
+Purpose. Check a unit for completeness and structural compliance against the template defined for its content type.
+Inputs: A unit + the content-type template ruleset.
+Outputs: Pass/fail with a list of missing or malformed required sections.
+Core logic:
+• Enforce required sections per content type (e.g. prerequisites, steps, owner, last-reviewed).
+• Return actionable gaps, not just a score.
+Hard constraints (must not):
+• Never approve or publish — it gates progression but does not authorize it.
+• Never rewrite content to pass itself.
+Reused by: Intake/Authoring Agent, Review-Support Agent.
+S6 — check-authorization
+Purpose. Verify that a given actor holds the required (role, category) grant for the transition they are attempting.
+Inputs: Actor identity, attempted transition (review/approve/publish), unit category.
+Outputs: Allow / deny, with the reason.
+Core logic:
+• Look up the actor's grants; require a matching role AND matching category scope.
+• Submitter requires no grant; reviewer/approver/publisher are category-scoped.
+Hard constraints (must not):
+• Never use agent judgment — deterministic rule check only.
+• Never cache a stale grant; always read current entitlements.
+Reused by: Every gated transition (Review-Support, Publishing, Migration agents).
+S7 — check-segregation-of-duties
+Purpose. Enforce that no individual occupies more than one gate role on a single unit's journey.
+Inputs: Actor identity, the unit's prior-actor history, attempted transition.
+Outputs: Allow / deny, with the colliding prior action if denied.
+Core logic:
+• Reject if the actor appears anywhere in the unit's prior-actor history (submitter, reviewer, approver, publisher).
+• On thin categories, defer to the configured override policy (admin waiver with audit entry) rather than silently passing.
+Hard constraints (must not):
+• Never allow self-approval or self-review.
+• Never waive silently — an override must produce an audit record.
+Reused by: Every gated transition; paired with S6 at each gate.
+S8 — transition-state
+Purpose. Move a unit between lifecycle states and record the actor, timestamp and reason. The single source of workflow truth.
+Inputs: Unit ID, from-state, to-state, actor, reason; requires S6 + S7 to have passed.
+Outputs: Updated workflow metadata and an appended prior-actor history entry.
+Core logic:
+• Permit only legal transitions per the state machine.
+• Refuse the transition unless both S6 (authorization) and S7 (SoD) returned allow.
+• Always append to the immutable actor history.
+Hard constraints (must not):
+• Never transition without recording the actor.
+• Never write content to Confluence — it owns state, not content.
+Reused by: All workflow agents.
+S9 — publish-to-confluence
+Purpose. Execute the Approved → Published transition by moving the page from the Staging space to the Published space (move-on-publish).
+Inputs: An Approved unit, target Published-space location.
+Outputs: A single live page in the Published space, stamped state=Published, with history retained.
+Core logic:
+• Move (not copy) the page so exactly one canonical page exists.
+• Stamp the state property = Published and write the review-due date (calls S12).
+• Retire any unit this one supersedes (calls S11).
+• Acts only via the iCanvas service account — the sole writer to either space.
+Hard constraints (must not):
+• Never leave a duplicate in Staging.
+• Never publish a unit not in Approved state.
+• Never run under a human user account.
+Reused by: Publishing Agent.
+S10 — pullback-to-staging
+Purpose. Begin an update cycle for an already-published unit by checking a working copy back into the Staging space.
+Inputs: A published unit ID, the submitting actor.
+Outputs: A new Draft workflow instance in Staging linked to the live published page.
+Core logic:
+• Copy the published page into Staging as a fresh Draft; the live page stays untouched and bot-visible.
+• Link the draft to its published parent so S9 knows what to overwrite on re-approval.
+Hard constraints (must not):
+• Never edit the live Published page directly.
+• Never expose the working copy to bots or the general audience.
+Reused by: Intake/Authoring Agent (update path).
+S11 — archive-superseded-unit
+Purpose. Retire a unit that a newly published one replaces, so old duplicates do not rot in place.
+Inputs: The superseded unit ID, the superseding unit ID.
+Outputs: Superseded unit moved to Archived state and out of the Published space.
+Core logic:
+• Set state = Archived, remove from bot-retrievable scope, keep for audit.
+• Record the supersession link for traceability.
+Hard constraints (must not):
+• Never hard-delete — archive only.
+• Never leave an archived unit bot-retrievable.
+Reused by: Publishing Agent, Migration Agent (dedup merge).
+S12 — stamp-review-date
+Purpose. Set or refresh the review-due / expiry date on a unit at publish time.
+Inputs: A unit + the freshness policy for its content type.
+Outputs: The unit with a review-due date and expiry date set.
+Core logic:
+• Compute the date from content-type policy (high-traffic onboarding topics get shorter cycles).
+Hard constraints (must not):
+• Never publish without a review-due date set.
+Reused by: S9 publish-to-confluence.
+S13 — scan-freshness
+Purpose. Continuously identify units approaching or past their review-due date.
+Inputs: The published corpus + freshness policy.
+Outputs: Lists of review-due and expired units with their owners.
+Core logic:
+• Run on a schedule; classify into approaching, due, overdue.
+Hard constraints (must not):
+• Never change state itself — it reports; S14/S8 act.
+Reused by: Freshness/Lifecycle Agent.
+S14 — quarantine-stale-unit
+Purpose. Pull an expired, un-re-approved unit out of the Published (bot-visible) scope.
+Inputs: An expired unit past its grace window.
+Outputs: Unit set to a Review-due/Quarantined state and removed from bot retrieval.
+Core logic:
+• Move out of Published scope; notify owner (calls S15); preserve for re-approval.
+Hard constraints (must not):
+• Never auto-edit content.
+• Never quarantine before the configured grace window.
+Reused by: Freshness/Lifecycle Agent.
+S15 — notify-actor
+Purpose. Send a targeted notification to the right person for the current step.
+Inputs: Recipient(s), event type, unit reference.
+Outputs: A delivered notification (review requested, approval pending, review-due, quarantined).
+Core logic:
+• Resolve the correct recipient from role+category; route to the configured channel.
+Hard constraints (must not):
+• Never notify outside the unit's authorized actor set.
+Reused by: All workflow agents.
+S16 — retrieve-published
+Purpose. The only retrieval path chatbots use. Returns published knowledge scoped to the asking bot.
+Inputs: A query + the bot's read-scope (categories/audiences it is allowed to surface).
+Outputs: Ranked published units within scope.
+Core logic:
+• Require BOTH conditions: page is in the Published space AND state property = Published (defence in depth).
+• Further filter to the bot's allowed categories/audiences — scoped views over one shared KB, never copies.
+Hard constraints (must not):
+• Never return anything not stamped Published, regardless of space.
+• Never read from Staging.
+Reused by: Chatbot Retrieval Agent (all chatbots).
+S17 — record-audit-event
+Purpose. Append an immutable audit entry for any consequential action.
+Inputs: Actor, action, unit, before/after state, reason, timestamp.
+Outputs: An appended audit-log record.
+Core logic:
+• Capture every gate decision, override, publish, archive and quarantine.
+Hard constraints (must not):
+• Never mutate or delete existing audit records.
+Reused by: Every agent and every gated skill.
+10. Agents (Skill Orchestrators)
+Agents are thin orchestrators that sequence micro-skills and apply the gates. The deterministic checks (S6, S7) and the audit log (S17) appear across multiple agents — which is exactly why they are micro-skills.
+Agent
+Composes
+Responsibility
+Intake / Authoring Agent
+S1, S2, S3, S5, S10, S15
+Front door for contributors. Normalizes input, tags it, warns on duplicates before submit, validates completeness, and for updates pulls the published page back to Staging. Produces a Submitted draft.
+Review-Support Agent
+S2, S4, S5, S6, S7, S8, S15, S17
+Assists the human reviewer: shows diffs, flags contradictions, checks template completeness, runs authorization + SoD gate checks, and records the In-Review → Approved (or rejected) transition the human decides.
+Publishing Agent
+S4, S6, S7, S8, S9, S11, S12, S15, S17
+Executes Approved → Published via the service account: move-on-publish, stamp review date, archive superseded units. Gated by S6 + S7 (publisher must differ from submitter/reviewer/approver).
+Freshness / Lifecycle Agent
+S13, S14, S15, S8, S17
+Runs continuously. Finds review-due/expired units, notifies owners, quarantines stale content out of bot scope. Stops the KB rotting back to its pre-migration state.
+Migration Agent
+S1, S2, S3, S5, S11
+One-time bulk seeding. Pulls each legacy item in as a Submitted draft, clusters for dedup, routes batches to domain owners for review/merge — never auto-publishes.
+Chatbot Retrieval Agent
+S16
+The runtime read path. Each chatbot is a scoped configuration over the single published KB; this agent enforces Published-only + scope filtering.
+11. Chatbots as Scoped Views
+Each chatbot is a configuration over the single published KB — not a copy of the data. A chatbot is defined by its read-scope (allowed categories/audiences), persona and the skills it may call. All of them retrieve exclusively through S16 (retrieve-published), which enforces Published-only plus scope filtering. Adding a chatbot is a config change, never a data duplication.
+12. Open Decisions
+• Per-category precedence rule for conflict resolution during migration (which source wins when two disagree).
+• Freshness cadence per content type (review-due interval and grace window before quarantine).
+• Override policy details for thin categories (who may waive SoD, and approval path for the waiver).
+• Connector inventory and field mappings for each source system (ServiceNow, each Confluence space, named databases, spreadsheets).
+• Knowledge-unit schema field list — to be finalized as the immediate next step.
+13. Immediate Next Step
+Finalize the knowledge-unit schema: the canonical field list, which fields live as Confluence page properties vs iCanvas workflow metadata, and the label set that drives both bot scoping (S16) and the freshness agent (S13/S14). The schema underpins every skill above.
+Confidential — Internal Design Document   |   Page
